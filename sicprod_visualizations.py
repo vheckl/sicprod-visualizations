@@ -4,7 +4,7 @@ import difflib
 
 st.set_page_config(page_title="SiCProD Dashboard")
 
-@# Cache so the CSV isn't re-read from disk on every interaction
+# Cache so the CSV isn't re-read from disk on every interaction
 @st.cache_data
 def load_data():
     return pd.read_csv("table_7.csv")
@@ -34,7 +34,9 @@ if section == "Gender Distribution":
 elif section == "Name Search":
     st.title("SiCProD Persons — Name Search")
 
-    query = st.text_input("Search for a name (Nachname or Vorname)")
+    
+
+    query = st.text_input(f"Search for a name (Nachname or Vorname)")
 
     if query:
         # Search across surname, forename, and known name variants
@@ -55,11 +57,11 @@ elif section == "Name Search":
                 st.write("No results found.")
 
             else:
-                st.write("Did you mean: {', '.join(close_matches)}?")
+                st.write(f"Did you mean: {', '.join(close_matches)}?")
 
         else:
-            st.write("Found {len(results)} matching record(s):")
+            st.write(f"Found {len(results)} matching record(s):")
             st.dataframe(results)
     
     else:
-        st.caption("Type a name above to search.")
+        st.caption(f"Type a name above to search.")
