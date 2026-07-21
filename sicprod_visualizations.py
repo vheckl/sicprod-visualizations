@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import difflib
 import networkx as nx
+import matplotlib.pyplot as plt
 
 st.set_page_config(page_title="SiCProD Dashboard")
 
@@ -82,10 +83,24 @@ elif section == "Marriage Distribution":
     for _, row in merged.iterrows():
         G.add_edge(row["Subj object id"], row["Obj object id"])
 
-    st.write(f"Rows in merged: {len(merged)}")
-    st.write(f"Nodes: {G.number_of_nodes()}")
-    st.write(f"Edges: {G.number_of_edges()}")
-    
+    fig, ax = plt.subplots(figsize=(16, 16))
+    pos = nx.spring_layout(G, seed=42)
+
+    nx.draw(
+    G,
+    pos,
+    ax=ax,
+    node_size=20,
+    node_color="steelblue",
+    edge_color="lightgray",
+    with_labels=False,
+)
+    st.pyplot(fig)
+
+    components = list(nx.connected_components(G))
+        
+    st.write(f"Number of components: {len(components)}")
+    st.write(f"Component sizes: {sorted([len(c) for c in components], reverse=True)}")
 
 
 
