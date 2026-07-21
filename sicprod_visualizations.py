@@ -37,7 +37,7 @@ if section == "Gender Distribution":
     st.bar_chart(gender_counts)
 
     total = len(df)
-    st.caption("Based on {total} person records.")
+    st.caption(f"Based on {total} person records.")
 
 elif section == "Name Search":
     st.title("SiCProD Persons — Name Search")
@@ -82,26 +82,49 @@ elif section == "Marriage Distribution":
 
     for _, row in merged.iterrows():
         G.add_edge(row["Subj object id"], row["Obj object id"])
+    
+    components = list(nx.connected_components(G))
+    big_components = [c for c in components if len(c) >= 3]
 
-    fig, ax = plt.subplots(figsize=(16, 16))
-    pos = nx.spring_layout(G, seed=42)
+    col1, col2, col3 = st.columns(3)
+    col1.metric("Total marriage records", len(marriages))
+    col2.metric("Distinct marriages", G.number_of_edges())
+    col3.metric("People who married more than once", len(big_components))   
 
+    #Full graph
+    st.subheader("Full network")
+    fig1, ax1 = plt.subplots(figsize=(16, 16))
+    pos = nx.spring_layout(G, seed=42, k=0.1)
     nx.draw(
     G,
     pos,
-    ax=ax,
+    ax=ax1,
     node_size=20,
     node_color="steelblue",
-    edge_color="lightgray",
+    edge_color="gray",
     with_labels=False,
 )
-    st.pyplot(fig)
+    st.pyplot(fig1)
 
-    components = list(nx.connected_components(G))
-        
-    st.write(f"Number of components: {len(components)}")
-    st.write(f"Component sizes: {sorted([len(c) for c in components], reverse=True)}")
+    #Filtered Graph 
+    st.subheader("People who married more than once")
 
+    nodes_to_keep = set()
+    for component in big_components:
+        nodes_to_keep.update(component)
 
+    G_filtered = G.subgraph(nodes_to_keep)
 
-
+    fig2, ax2 = plt.subplots(figsize=(16, 16))
+    pos2 = nx.spring_layout(G_filtered, seed=42, k=0.2)
+    nx.draw(
+        G_filtered,
+        pos2,
+        ax=ax2,
+        node_size=300,
+        node_color="steelblue",
+        edge_color="gray",
+        with_labels=True,
+        font_size=8,
+    )
+    st.pyplot(fig2)
