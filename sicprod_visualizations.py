@@ -1,17 +1,24 @@
 import streamlit as st
 import pandas as pd
 import difflib
+import networkx as nx
 
 st.set_page_config(page_title="SiCProD Dashboard")
 
 # Cache so the CSV isn't re-read from disk on every interaction
 @st.cache_data
+def load_marriages():
+    return pd.read_csv("table_10.csv")
+
+@st.cache_data
 def load_data():
-    return pd.read_csv("table_7.csv")
+    return pd.read_csv("table_11.csv")
 
 df = load_data()
+persons = load_data()
+marriages = load_marriages()
 
-section = st.sidebar.radio("View", ["Gender Distribution", "Name Search"])
+section = st.sidebar.radio("View", ["Gender Distribution", "Name Search", "Marriage Distribution"])
 
 if section == "Gender Distribution":
     st.title("SiCProD Persons — Gender Distribution")
@@ -33,8 +40,6 @@ if section == "Gender Distribution":
 
 elif section == "Name Search":
     st.title("SiCProD Persons — Name Search")
-
-    
 
     query = st.text_input(f"Search for a name (Nachname or Vorname)")
 
@@ -65,3 +70,23 @@ elif section == "Name Search":
     
     else:
         st.caption(f"Type a name above to search.")
+
+elif section == "Marriage Distribution":
+    st.title("SicProd Marriage Distribution")
+
+    merged = marriages.merge(persons, left_on="Subj object id", right_on="ID")
+    merged = merged.merge(persons, left_on="Obj object id", right_on="ID", suffixes=("_subj", "_obj"))
+
+    G = nx.Graph()
+
+    for _, row in merged.iterrows():
+        G.add_edge(row["Subj object id"], row["Obj object id"])
+
+    st.write(f"Rows in merged: {len(merged)}")
+    st.write(f"Nodes: {G.number_of_nodes()}")
+    st.write(f"Edges: {G.number_of_edges()}")
+    
+
+
+
+
