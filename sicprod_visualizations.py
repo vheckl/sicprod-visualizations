@@ -3,6 +3,7 @@ import pandas as pd
 import difflib
 import networkx as nx
 import matplotlib.pyplot as plt
+import math
 
 st.set_page_config(page_title="SiCProD Dashboard")
 
@@ -128,11 +129,36 @@ elif section == "Marriage Distribution":
     # contains entries for nodes that exist in G_filtered
     filtered_labels = {node: all_names[node] for node in G_filtered.nodes() if node in all_names}
 
-    fig2, ax2 = plt.subplots(figsize=(16, 16))
-    pos2 = nx.spring_layout(G_filtered, seed=42, k=0.2)
+    # Set up grid and empty containers for more structured display
+    n_cols = 6
+    n_rows = math.ceil(len(big_components) / n_cols)
+
+    spacing_x = 5
+    spacing_y = 5
+
+    combined_pos = {}
+    combined_labels = {}
+
+    # Looping through each cluster of big_components 
+    # to give it's own cell to each 
+    for i, component in enumerate(big_components):
+        col = i % n_cols
+        row = i // n_cols
+
+        # Building each clusters tiny layout
+        subgraph = G.subgraph(component)
+        sub_pos = nx.spring_layout(subgraph, seed=42)
+
+        for node, (x, y) in sub_pos.items():
+            # Moving each cluster and each label into it's cell
+            combined_pos[node] = (x + col * spacing_x, -y - row * spacing_y)
+            combined_labels[node] = all_names.get(node, "")
+
+    fig2, ax2 = plt.subplots(figsize=(30, 30))
+    pos2 = nx.spring_layout(G_filtered, seed=42, k=0.2, scale=3)
     nx.draw(
         G_filtered,
-        pos2,
+        combined_pos,
         ax=ax2,
         labels=filtered_labels,
         node_size=300,
