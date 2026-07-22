@@ -91,7 +91,7 @@ elif section == "Marriage Distribution":
     col2.metric("Distinct marriages", G.number_of_edges())
     col3.metric("People who married more than once", len(big_components))   
 
-    #Full graph
+    # Full graph
     st.subheader("Full network")
     fig1, ax1 = plt.subplots(figsize=(16, 16))
     pos = nx.spring_layout(G, seed=42, k=0.1)
@@ -106,7 +106,7 @@ elif section == "Marriage Distribution":
 )
     st.pyplot(fig1)
 
-    #Filtered Graph 
+    # Filtered Graph 
     st.subheader("People who married more than once")
 
     nodes_to_keep = set()
@@ -115,16 +115,31 @@ elif section == "Marriage Distribution":
 
     G_filtered = G.subgraph(nodes_to_keep)
 
+    # Creating a dict with pairs of IDs and 
+    # person names to give the graph as labels 
+    subj_names = dict(zip(merged["Subj object id"], merged["Name_subj"]))
+    obj_names = dict(zip(merged["Obj object id"], merged["Name_obj"]))
+
+    all_names = {}
+    all_names.update(subj_names)
+    all_names.update(obj_names)
+
+    # Dictionary comprehension to create a dict that only 
+    # contains entries for nodes that exist in G_filtered
+    filtered_labels = {node: all_names[node] for node in G_filtered.nodes() if node in all_names}
+
     fig2, ax2 = plt.subplots(figsize=(16, 16))
     pos2 = nx.spring_layout(G_filtered, seed=42, k=0.2)
     nx.draw(
         G_filtered,
         pos2,
         ax=ax2,
+        labels=filtered_labels,
         node_size=300,
-        node_color="steelblue",
+        node_color="lightsteelblue",
         edge_color="gray",
         with_labels=True,
-        font_size=8,
+        font_size=12,
     )
+
     st.pyplot(fig2)
