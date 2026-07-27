@@ -168,5 +168,8 @@ elif section == "Marriage Distribution":
         font_size=12,
     )
 
-    ax2.margins(0.1)
+    xs = [p[0] for p in combined_pos.values()]
+    ys = [p[1] for p in combined_pos.values()]
+    ax2.set_xlim(min(xs) - 1, max(xs) + 1)
+    ax2.set_ylim(min(ys) - 1, max(ys) + 1)
     st.pyplot(fig2)
