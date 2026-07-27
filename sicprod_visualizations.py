@@ -10,11 +10,11 @@ st.set_page_config(page_title="SiCProD Dashboard")
 # Cache so the CSV isn't re-read from disk on every interaction
 @st.cache_data
 def load_marriages():
-    return pd.read_csv("table_10.csv")
+    return pd.read_csv("table_marriages.csv")
 
 @st.cache_data
 def load_data():
-    return pd.read_csv("table_11.csv")
+    return pd.read_csv("table_person_data.csv")
 
 df = load_data()
 persons = load_data()

@@ -1,8 +1,7 @@
 venv/
+.venv/
 __pycache__/
 *.pyc
 .DS_Store
 table_7.csv
-table_10.csv
-table_11.csv
 Streamlit Visualization.docx
