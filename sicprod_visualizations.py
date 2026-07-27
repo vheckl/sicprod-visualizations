@@ -130,7 +130,7 @@ elif section == "Marriage Distribution":
     filtered_labels = {node: all_names[node] for node in G_filtered.nodes() if node in all_names}
 
     # Set up grid and empty containers for more structured display
-    n_cols = 6
+    n_cols = 2
     n_rows = math.ceil(len(big_components) / n_cols)
 
     spacing_x = 5
@@ -154,8 +154,8 @@ elif section == "Marriage Distribution":
             combined_pos[node] = (x + col * spacing_x, -y - row * spacing_y)
             combined_labels[node] = all_names.get(node, "")
 
-    fig2, ax2 = plt.subplots(figsize=(30, 30))
-    pos2 = nx.spring_layout(G_filtered, seed=42, k=0.2, scale=3)
+    fig2, ax2 = plt.subplots(figsize=(14, 70))
+    pos2 = nx.spring_layout(G_filtered, seed=42, k=0.1, scale=3)
     nx.draw(
         G_filtered,
         combined_pos,
@@ -168,4 +168,5 @@ elif section == "Marriage Distribution":
         font_size=12,
     )
 
+    ax2.margins(0.1)
     st.pyplot(fig2)
