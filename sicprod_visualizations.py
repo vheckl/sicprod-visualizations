@@ -79,6 +79,9 @@ elif section == "Marriage Distribution":
     merged = marriages.merge(persons, left_on="Subj object id", right_on="ID")
     merged = merged.merge(persons, left_on="Obj object id", right_on="ID", suffixes=("_subj", "_obj"))
 
+    merged["FullName_subj"] = merged["Vorname_subj"].fillna("") + " " + merged["Name_subj"]
+    merged["FullName_obj"] = merged["Vorname_obj"].fillna("") + " " + merged["Name_obj"]
+
     G = nx.Graph()
 
     for _, row in merged.iterrows():
@@ -118,8 +121,8 @@ elif section == "Marriage Distribution":
 
     # Creating a dict with pairs of IDs and 
     # person names to give the graph as labels 
-    subj_names = dict(zip(merged["Subj object id"], merged["Name_subj"]))
-    obj_names = dict(zip(merged["Obj object id"], merged["Name_obj"]))
+    subj_names = dict(zip(merged["Subj object id"], merged["FullName_subj"]))
+    obj_names = dict(zip(merged["Obj object id"], merged["FullName_obj"]))
 
     all_names = {}
     all_names.update(subj_names)
